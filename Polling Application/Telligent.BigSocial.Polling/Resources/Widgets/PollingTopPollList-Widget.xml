@@ -1,0 +1,32 @@
+<scriptedContentFragments>
+	<scriptedContentFragment name="${resource:widget_toppolllist}" version="7.0.0.1" description="${resource:widget_description}" instanceIdentifier="7eaaab7a5d0d41be919a4f9a719097ab" theme="" isCacheable="true" varyCacheByUser="true" showHeaderByDefault="true" cssClass="top-poll-list">
+		<contentScript>
+			<![CDATA[
+$core_v2_ui.PagedContent('pagedContent.vm')
+$core_v2_ui.Pager($polls.PageIndex, $polls.PageSize, $polls.TotalCount, "%{ PagedContentFile='pagedContent.vm' }")
+			]]>
+		</contentScript>
+		<headerScript>
+			<![CDATA[
+$core_v2_widget.ApplyTokens($core_v2_widget.GetStringValue('fragmentHeader', '${resource:widget_polllist}'))
+			]]>
+		</headerScript>
+		<configuration>
+			<![CDATA[
+<propertyGroup id="options" resourceName="configuration_options">
+	<property id="fragmentHeader" resourceName="configuration_header" dataType="string" defaultValue="${resource:widget_polllist}" controlType="Telligent.Evolution.Controls.ContentFragmentTokenStringControl, Telligent.Evolution.Controls" />
+</propertyGroup>
+			]]>
+		</configuration>
+		<languageResources>
+			<language key="en-us">
+				<resource name="widget_toppolllist">Polling - Top Poll List</resource>
+				<resource name="widget_description">Lists polls within the current group.</resource>
+				<resource name="configuration_options">Options</resource>
+				<resource name="configuration_header">Header</resource>
+				<resource name="ui_toppolls">Top Polls</resource>
+				<resource name="posted_by">Asked by:</resource>
+			</language>
+		</languageResources>
+	</scriptedContentFragment>
+</scriptedContentFragments>

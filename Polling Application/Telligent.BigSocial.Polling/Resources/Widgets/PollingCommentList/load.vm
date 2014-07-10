@@ -1,0 +1,105 @@
+#set ($pageSize = $core_v2_widget.GetIntValue('pageSize', 15))
+#set ($pageIndex = $core_v2_ui.GetCurrentPageIndex())
+#set ($poll = $telligent_v1_poll.Current)
+#set ($pollAuthorId = $poll.Author.Id)
+#set ($comments = $core_v2_comments.List("%{ContentId = $poll.ContentId, ContentTypeId = $telligent_v1_poll.ContentTypeId, PageSize=$pageSize, PageIndex=$pageIndex}"))
+#set ($accessingUserIsRegistered = $core_v2_user.IsRegistered($core_v2_user.Accessing.Id))
+
+#foreach($comment in $comments)
+#beforeall
+	<a name="comments"></a>
+	<div class="content-list-header"></div>
+	<div class="content-list-name">$core_v2_language.GetResource("ui_comments")</div>
+	<ul class="content-list">
+#each
+	#set($IsAnonymous = true)
+	#set($IsAnonymous = !$core_v2_User.IsRegistered($comment.Author.Id))
+	#if ($pollAuthorId == $comment.User.Id)
+		<li class="content-item user-is-author" data-commentid="$comment.CommentId">
+			<div class="full-post-outer fiji-full-post-outer evolution2-full-post-outer">
+			<div class="full-post-header user-is-author">
+				<div class="r fiji-r evolution2-r"></div>
+			</div>
+			<div class="full-post user-is-author">
+	#else
+		<li class="content-item" data-commentid="$comment.CommentId">
+			<div class="full-post-outer fiji-full-post-outer evolution2-full-post-outer">
+			<div class="full-post-header">
+				<div class="r fiji-r evolution2-r"></div>
+			</div>
+			<div class="full-post">
+	#end
+			<div class="full-post-inner fiji-full-post-inner evolution2-full-post-inner">
+				<a name="comment-$comment.CommentId"></a>
+				<div class="post-author">
+					<span class="avatar">
+						#if ($comment.User.ProfileUrl)
+							<a href="$core_v2_encoding.HtmlAttributeEncode($comment.User.ProfileUrl)">
+								$core_v2_ui.GetResizedImageHtml($comment.User.AvatarUrl, 32, 32, "%{border='0', alt=$comment.User.DisplayName}")
+							</a>
+						#else
+							$core_v2_ui.GetResizedImageHtml($comment.User.AvatarUrl, 32, 32, "%{border='0', alt=$comment.User.DisplayName}")
+						#end
+					</span>
+					<span class="user-name">
+						#if ($comment.User.ProfileUrl)
+							<a href="$core_v2_encoding.HtmlAttributeEncode($comment.User.ProfileUrl)" class="internal-link view-user-profile">
+								<span></span>$comment.User.DisplayName
+							</a>
+						#else
+							<span></span>$comment.User.DisplayName
+						#end
+					</span>
+				</div>
+				<div class="post-date">
+					<span class="value">$core_v2_language.FormatDateAndTime($comment.CreatedDate)</span>
+				</div>
+			    <div class="post-moderate">
+			        #if ($accessingUserIsRegistered)
+						#set ($moderateOptions = "%{}")
+						#if($core_v2_nodePermission.Get("groups", $poll.Group.Id, "Group_ModifyGroup").IsAllowed)
+							#set ($DQ = '"')
+							$moderateOptions.Add('AdditionalLinks',"[{${DQ}href${DQ}:${DQ}#${DQ},${DQ}text${DQ}:${DQ}${core_v2_language.GetResource('comment_delete')}${DQ},${DQ}className${DQ}:${DQ}delete-post${DQ}}]")
+						#end
+			            $core_v2_ui.Moderate($comment.CommentId, $comment.CommentContentTypeId, $moderateOptions)
+			        #end
+			    </div>
+				<div class="post-content user-defined-markup">
+					$comment.Body()
+				</div>
+				<div class="post-actions">
+					<div class="navigation-list-header"></div>
+					<ul class="navigation-list">
+						<li class="navigation-item post-like-count">
+							#if ($accessingUserIsRegistered)
+								#set ($likeFormat = '{toggle} <span class="count"><span class="like-indicator inline"></span>{count}</span>')
+							#else
+								#set ($likeFormat = '<span class="count"><span class="like-indicator inline"></span>{count}</span>')
+							#end
+			            	<span class="attribute-value">$core_v2_ui.Like($comment.CommentId, $comment.CommentContentTypeId, "%{ Format = $likeFormat }")</span>
+			            </li>
+					</ul>
+					<div class="navigation-list-footer"></div>
+				</div>
+			</div>
+			</div>
+		#if ($pollAuthorId == $comment.User.Id)
+			<div class="full-post-footer user-is-author">
+				<div class="r fiji-r evolution2-r"></div>
+			</div>
+		#else
+			<div class="full-post-footer">
+				<div class="r fiji-r evolution2-r"></div>
+			</div>
+		#end
+		</div>
+	</li>
+#afterall
+	</ul>
+	<div class="content-list-footer"></div>
+#end
+
+#set($baseUrl = $core_v2_page.Url)
+#set($baseUrl = $core_v2_page.GetQueryStringValue('w_baseUrl'))
+
+$!core_v2_ui.Pager($comments.PageIndex, $comments.PageSize, $comments.TotalCount, "%{Target='comments',BaseUrl=$baseUrl,PagedContentFile='load.vm',Transition='none'}")

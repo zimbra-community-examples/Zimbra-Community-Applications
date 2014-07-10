@@ -1,0 +1,34 @@
+#set($pageIndex = $core_v2_ui.GetCurrentPageIndex)
+#set($pageSize = 3)
+#set($group = $core_v2_group.Current)
+
+#set($polls = $telligent_v1_poll.List($group.Id, "%{PageIndex=$pageIndex, PageSize=$pageSize, SortBy='TopPollsScore'}"))
+#foreach($poll in $polls)
+#beforeall
+    <div class="content-list-header"></div>
+    <div class="content-list">
+#each
+    <div class="content-item">
+	<div class="abbreviated-post-header"></div>
+	<div class="abbreviated-post">
+		<h4 class="post-name"><a href="$core_v2_encoding.HtmlAttributeEncode($poll.Url)" class="internal-link view-poll"><span></span>$core_v2_language.Truncate($poll.Name, 25, '...')</a></h4>
+		<div class="post-author">
+			$core_v2_language.GetResource('posted_by')
+			<span class="user-name">
+				#if ($post.Author.ProfileUrl)
+					<a href="$core_v2_encoding.HtmlAttributeEncode($poll.Author.ProfileUrl)">$core_v2_language.Truncate($poll.Author.DisplayName, 15, '...')</a>
+				#else
+					$core_v2_language.Truncate($poll.Author.DisplayName, 15, '...')
+				#end
+			</span>
+		</div>
+	</div>
+	<div class="abbreviated-post-footer"></div>
+    </div>
+#afterall
+	<div style="clear: both;"></div>
+    </div>
+    <div class="content-list-footer"></div>
+#nodata
+	$core_v2_widget.Hide()
+#end

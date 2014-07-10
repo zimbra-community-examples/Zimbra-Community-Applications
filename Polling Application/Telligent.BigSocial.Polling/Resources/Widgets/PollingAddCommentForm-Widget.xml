@@ -1,0 +1,107 @@
+<scriptedContentFragments>
+	<scriptedContentFragment name="${resource:widget_polladdcommentform}" version="7.0.0.1" description="${resource:widget_description}" instanceIdentifier="bfdae73a86be4384abb9c25456b15a03" theme="" isCacheable="true" varyCacheByUser="true" showHeaderByDefault="true" cssClass="add-poll-comment">
+		<contentScript>
+			<![CDATA[
+#set ($poll = false)
+#set ($poll = $telligent_v1_poll.Current)
+#if (!$poll)
+	$core_v2_widget.Hide()
+#end
+#if (!$telligent_v1_poll.CanVote($poll.Id))
+	$core_v2_widget.Hide()
+#end
+
+<div id="$core_v2_widget.UniqueId('successMessage')" class="message success" style="display: none;">
+	$core_v2_language.GetResource('comment_savesuccessful') &nbsp;
+	<a href="#" class="internal-link close-message" title="$core_v2_language.GetResource('comment_closemessage')"><span></span>$core_v2_language.GetResource('comment_closemessage')</a>
+</div>
+
+<div id="$core_v2_widget.UniqueId('moderateMessage')" class="message warning" style="display: none;">
+	$core_v2_language.GetResource('comment_moderated') &nbsp;
+	<a href="#" class="internal-link close-message" title="$core_v2_language.GetResource('comment_closemessage')"><span></span>$core_v2_language.GetResource('comment_closemessage')</a>
+</div>
+
+<div id="$core_v2_widget.UniqueId('errorMessage')" class="message error" style="display: none;"></div>
+
+<div id="$core_v2_widget.UniqueId('form')">
+	<div class="field-list-header"></div>
+	<fieldset class="field-list">
+		<legend class="field-list-description">$core_v2_language.GetResource('comment_addcomment')</legend>
+		<ul class="field-list">
+			<li class="field-item post-body">
+				<span class="field-item-input">
+					<textarea id="$core_v2_widget.UniqueId('body')" rows="3" name="$core_v2_widget.UniqueId('body')" style="resize: none; overflow-y: hidden;"></textarea>
+				</span>
+				<span class="field-item-validation" style="display: none;"></span>
+			</li>
+			<li class="field-item post-submit">
+				<span class="field-item-input">
+					<a href="#" onclick="return false;" class="internal-link add-reply submit-button" id="$core_v2_widget.UniqueId('save')">
+						<span></span>$core_v2_language.GetResource('comment_save')
+					</a>
+					<span class="processing" style="visibility: hidden;"></span>
+				</span>
+			</li>
+		</ul>
+	</fieldset>
+	<div class="field-list-footer"></div>
+</div>
+
+#registerEndOfPageHtml('telligent.bigsocial.widgets.pollAddCommentForm')
+	<script type="text/javascript" src="$core_v2_encoding.HtmlAttributeEncode($core_v2_widget.GetFileUrl('ui.js'))"></script>
+#end
+#registerEndOfPageHtml()
+	<script type="text/javascript">
+		jQuery(document).ready(function(j){
+			j.telligent.bigsocial.widgets.pollAddCommentForm.register({
+				wrapperId: '$core_v2_widget.WrapperElementId',
+				pollContentId: '$poll.ContentId',
+				pollContentTypeId: '$telligent_v1_poll.ContentTypeId',
+				publishErrorText: '$core_v2_encoding.JavascriptEncode($core_v2_language.GetResource('comment_ajaxError'))',
+				publishingText: '$core_v2_encoding.JavascriptEncode($core_v2_language.GetResource('comment_saving'))',
+				publishText: '$core_v2_encoding.JavascriptEncode($core_v2_language.GetResource('comment_save'))',
+				bodyRequiredText: '$core_v2_encoding.JavascriptEncode($core_v2_language.GetResource('comment_bodyRequired'))',
+				save: j('#$core_v2_widget.UniqueId('save')'),
+				bodySelector: '#$core_v2_widget.UniqueId('body')',
+				successMessage: j('#$core_v2_widget.UniqueId('successMessage')'),
+				moderateMessage: j('#$core_v2_widget.UniqueId('moderateMessage')'),
+				errorMessage: j('#$core_v2_widget.UniqueId('errorMessage')')
+			});
+		});
+	</script>
+#end
+			]]>
+		</contentScript>
+		<headerScript>
+			<![CDATA[
+$core_v2_widget.ApplyTokens($core_v2_widget.GetStringValue('fragmentHeader', '${resource:widget_polladdcommentform}'))
+			]]>
+		</headerScript>
+		<configuration>
+			<![CDATA[
+<propertyGroup id="options" resourceName="configuration_options">
+	<property id="fragmentHeader" resourceName="configuration_header" dataType="string" defaultValue="${resource:widget_polladdcommentform}" controlType="Telligent.Evolution.Controls.ContentFragmentTokenStringControl, Telligent.Evolution.Controls" />
+</propertyGroup>
+			]]>
+		</configuration>
+		<languageResources>
+			<language key="en-us">
+				<resource name="widget_polladdcommentform">Polling - Add Comment Form</resource>
+				<resource name="widget_description">Form for adding a comment on a poll.</resource>
+				<resource name="configuration_options">Options</resource>
+				<resource name="configuration_header">Header</resource>
+				<resource name="comment_savesuccessful">Your comment has been posted.</resource>
+				<resource name="comment_closemessage">Close</resource>
+				<resource name="comment_moderated">Thank you, your comment requires moderation so it may take a while to appear.</resource>
+				<resource name="comment_addcomment">Leave a Comment</resource>
+				<resource name="comment_save">Post</resource>
+				<resource name="comment_ajaxError">There was an error saving your comment.</resource>
+				<resource name="comment_saving">Publishing</resource>
+				<resource name="comment_bodyRequired">Please enter a comment</resource>
+			</language>
+		</languageResources>
+		<requiredContext>
+			<context id="d80d27d4e20240009de310ec6e513785" />
+		</requiredContext>
+	</scriptedContentFragment>
+</scriptedContentFragments>
